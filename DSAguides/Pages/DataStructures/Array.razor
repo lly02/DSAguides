@@ -1,4 +1,5 @@
-﻿@page "/data-structures/array"
+﻿@using System.Runtime.InteropServices.JavaScript
+@page "/data-structures/array"
 
 <div id="animation" class="w-100">
     <div id="nodes">
@@ -19,7 +20,20 @@
         <span class="information-text">Information</span>
     </div>
     <div id="options" class="accordion">
-        <div class="accordion-item">
+        <div class="accordion-item new">
+            <h2 class="accordion-header">
+                <button @onclick=NewToggle class="accordion-button @NewCollapsedButton">
+                    New
+                </button>
+            </h2>
+            <div class="accordion-collapse collapse @NewCollapsed">
+                <div class="accordion-body">
+                    <input @bind=_newArray />
+                    <button @onclick=OnNewArray>Run</button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item add">
             <h2 class="accordion-header">
                 <button @onclick=AddToggle class="accordion-button @AddCollapsedButton">
                     Add
@@ -27,12 +41,12 @@
             </h2>
             <div class="accordion-collapse collapse @AddCollapsed">
                 <div class="accordion-body">
-                    <input />
-                    <button>Run</button>
+                    <input @bind=_addValue/>
+                    <button @onclick=OnAddValue>Run</button>
                 </div>
             </div>
         </div>
-        <div class="accordion-item">
+        <div class="accordion-item remove">
             <h2 class="accordion-header">
                 <button @onclick=RemoveToggle class="accordion-button @RemoveCollapsedButton">
                     Remove
@@ -40,12 +54,12 @@
             </h2>
             <div class="accordion-collapse collapse @RemoveCollapsed">
                 <div class="accordion-body">
-                    <input />
-                    <button>Run</button>
+                    <input @bind="RemoveIndex"/>
+                    <button @onclick=OnRemove>Run</button>
                 </div>
             </div>
         </div>
-        <div class="accordion-item">
+        <div class="accordion-item clear">
             <h2 class="accordion-header">
                 <button @onclick=ClearToggle class="accordion-button @ClearCollapsedButton">
                     Clear
@@ -53,7 +67,7 @@
             </h2>
             <div class="accordion-collapse collapse @ClearCollapsed">
                 <div class="accordion-body">
-                    <button>Run</button>
+                    <button @onclick=OnClear>Run</button>
                 </div>
             </div>
         </div>
@@ -61,20 +75,32 @@
 </div>
 
 @code {
+    string NewCollapsedButton => _newCollapsed ? "collapsed" : "";
     string AddCollapsedButton => _addCollapsed ? "collapsed" : "";
     string RemoveCollapsedButton => _removeCollapsed ? "collapsed" : "";
     string ClearCollapsedButton => _clearCollapsed ? "collapsed" : "";
 
+    string NewCollapsed => _newCollapsed ? "" : "show";
     string AddCollapsed => _addCollapsed ? "" : "show";
     string RemoveCollapsed => _removeCollapsed ? "" : "show";
     string ClearCollapsed => _clearCollapsed ? "" : "show";
 
+    bool _newCollapsed = true;
     bool _addCollapsed = true;
     bool _removeCollapsed = true;
     bool _clearCollapsed = true;
 
+    void NewToggle()
+    {
+        _newCollapsed = !_newCollapsed;
+        _addCollapsed = true;
+        _removeCollapsed = true;
+        _clearCollapsed = true;
+    }
+
     void AddToggle()
     {
+        _newCollapsed = true;
         _addCollapsed = !_addCollapsed;
         _removeCollapsed = true;
         _clearCollapsed = true;
@@ -82,6 +108,7 @@
 
     void RemoveToggle()
     {
+        _newCollapsed = true;
         _addCollapsed = true;
         _removeCollapsed = !_removeCollapsed;
         _clearCollapsed = true;
@@ -89,11 +116,67 @@
 
     void ClearToggle()
     {
+        _newCollapsed = true;
         _addCollapsed = true;
         _removeCollapsed = true;
         _clearCollapsed = !_clearCollapsed;
     }
 
     // Nodes animation
-    int[] nodes = new int[10];
+    int[]? nodes;
+
+    string _newArray = "0";
+    string _addValue = "0";
+    string _removeIndex = "0";
+
+    string NewArray
+    {
+        get => _newArray;
+        set => _newArray = value;
+    }
+    string AddValue
+    {
+        get => _addValue;
+        set => _addValue = value;
+    }
+    string RemoveIndex {
+        get => _removeIndex;
+        set => _removeIndex = value;
+    }
+
+    void OnNewArray()
+    {
+        //NewArray = String.Concat(NewArray.Where(c => !Char.IsWhiteSpace(c)));
+        //nodes = StringToIntList(NewArray).ToArray();
+        NewArrayJS(_newArray);
+    }
+
+    void OnAddValue()
+    {
+        AddValueJS(_addValue);
+    }
+
+    void OnRemove()
+    {
+        RemoveIndexJS(_removeIndex);
+    }
+
+    void OnClear()
+    {
+        ClearJS();
+    }
+
+    IEnumerable<int> StringToIntList(string s)
+    {
+        foreach (string str in s.Split(','))
+        {
+            yield return int.Parse(str);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JSHost.ImportAsync("Array", "../Pages/DataStructures/Array.razor.js");
+        await base.OnInitializedAsync(); 
+    }
 }
