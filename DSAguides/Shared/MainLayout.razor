@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <main>
+<div class="page h-100">
+    <main class="h-100">
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/">
@@ -11,75 +11,32 @@
                 <button class="navbar-toggler" @onclick="NavbarToggle" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="@NavbarCollapse navbar-collapse">
+                <div class="@NavbarCollapsed navbar-collapse">
                     <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" @onclick="DataStructureDropDownToggle" href="/">
-                                Data Structures
-                            </a>
-                            <ul class="dropdown-menu @DataStructureCollapse">
-                                <li>
-                                    <a class="dropdown-item" href="/">Array</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/">List</a>
-                                </li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/data-structures/array">Data Structures</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" @onclick="AlgorithmDropDownToggle" href="/">
-                                Algorithms
-                            </a>
-                            <ul class="dropdown-menu @AlgorithmCollapse">
-                                <li>
-                                    <a class="dropdown-item" href="/">Array</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/">List</a>
-                                </li>
-                            </ul>
+                            <a class="nav-link" href="/">Algorithms</a>
                         </li>
-                    </ul>    
+                    </ul>
                 </div>
             </div>
         </nav>
 
-        <div class="content px-4">
+        <div id="page-content">
             @Body
         </div>
     </main>
 </div>
 
 @code {
-    public string NavbarCollapse
-    {
-        get => _navbarCollapsed ? "collapse" : "";
-    }
-    public string DataStructureCollapse
-    {
-        get => _dataStructureCollapsed ? "" : "show";
-    }
-    public string AlgorithmCollapse
-    {
-        get => _algorithmCollapsed ? "" : "show";
-    }
+    string NavbarCollapsed => _navbarCollapsed ? "collapse" : "";
 
     bool _navbarCollapsed = true;
-    bool _dataStructureCollapsed = true;
-    bool _algorithmCollapsed = true;
 
     void NavbarToggle()
     {
-        _navbarCollapsed = _navbarCollapsed ? false : true;
-    }
-
-    void DataStructureDropDownToggle()
-    {
-        _dataStructureCollapsed = _dataStructureCollapsed ? false : true;
-    }
-
-    void AlgorithmDropDownToggle()
-    {
-        _algorithmCollapsed = _algorithmCollapsed ? false : true;
+        _navbarCollapsed = !_navbarCollapsed;
     }
 }

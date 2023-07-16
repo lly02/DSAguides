@@ -1,0 +1,99 @@
+﻿@page "/data-structures/array"
+
+<div id="animation" class="w-100">
+    <div id="nodes">
+        <div class="row m-0">
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+            <div class="col node"></div>
+        </div>
+    </div>
+    <div id="information">
+        <span class="information-text">Information</span>
+    </div>
+    <div id="options" class="accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button @onclick=AddToggle class="accordion-button @AddCollapsedButton">
+                    Add
+                </button>
+            </h2>
+            <div class="accordion-collapse collapse @AddCollapsed">
+                <div class="accordion-body">
+                    <input />
+                    <button>Run</button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button @onclick=RemoveToggle class="accordion-button @RemoveCollapsedButton">
+                    Remove
+                </button>
+            </h2>
+            <div class="accordion-collapse collapse @RemoveCollapsed">
+                <div class="accordion-body">
+                    <input />
+                    <button>Run</button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button @onclick=ClearToggle class="accordion-button @ClearCollapsedButton">
+                    Clear
+                </button>
+            </h2>
+            <div class="accordion-collapse collapse @ClearCollapsed">
+                <div class="accordion-body">
+                    <button>Run</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    string AddCollapsedButton => _addCollapsed ? "collapsed" : "";
+    string RemoveCollapsedButton => _removeCollapsed ? "collapsed" : "";
+    string ClearCollapsedButton => _clearCollapsed ? "collapsed" : "";
+
+    string AddCollapsed => _addCollapsed ? "" : "show";
+    string RemoveCollapsed => _removeCollapsed ? "" : "show";
+    string ClearCollapsed => _clearCollapsed ? "" : "show";
+
+    bool _addCollapsed = true;
+    bool _removeCollapsed = true;
+    bool _clearCollapsed = true;
+
+    void AddToggle()
+    {
+        _addCollapsed = !_addCollapsed;
+        _removeCollapsed = true;
+        _clearCollapsed = true;
+    }
+
+    void RemoveToggle()
+    {
+        _addCollapsed = true;
+        _removeCollapsed = !_removeCollapsed;
+        _clearCollapsed = true;
+    }
+
+    void ClearToggle()
+    {
+        _addCollapsed = true;
+        _removeCollapsed = true;
+        _clearCollapsed = !_clearCollapsed;
+    }
+
+    // Nodes animation
+    int[] nodes = new int[10];
+}

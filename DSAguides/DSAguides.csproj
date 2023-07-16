@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\DataStructures\" />
+    <Folder Include="Models\DataStructures\Array\" />
     <Folder Include="Pages\Algorithms\" />
   </ItemGroup>
 
