@@ -1,4 +1,6 @@
 ﻿@using System.Runtime.InteropServices.JavaScript
+@using Models.Shared.Animation
+
 @page "/data-structures/array"
 
 <div id="animation" class="w-100">
@@ -22,11 +24,11 @@
     <div id="options" class="accordion">
         <div class="accordion-item new">
             <h2 class="accordion-header">
-                <button @onclick=NewToggle class="accordion-button @NewCollapsedButton">
+                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#new-collapse">
                     New
                 </button>
             </h2>
-            <div class="accordion-collapse collapse @NewCollapsed">
+            <div id="new-collapse" class="accordion-collapse collapse">
                 <div class="accordion-body">
                     <input @bind=_newArray />
                     <button @onclick=OnNewArray>Run</button>
@@ -35,11 +37,11 @@
         </div>
         <div class="accordion-item add">
             <h2 class="accordion-header">
-                <button @onclick=AddToggle class="accordion-button @AddCollapsedButton">
+                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#add-collapse">
                     Add
                 </button>
             </h2>
-            <div class="accordion-collapse collapse @AddCollapsed">
+            <div id="add-collapse" class="accordion-collapse collapse">
                 <div class="accordion-body">
                     <input @bind=_addValue/>
                     <button @onclick=OnAddValue>Run</button>
@@ -48,11 +50,11 @@
         </div>
         <div class="accordion-item remove">
             <h2 class="accordion-header">
-                <button @onclick=RemoveToggle class="accordion-button @RemoveCollapsedButton">
+                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#remove-collapse">
                     Remove
                 </button>
             </h2>
-            <div class="accordion-collapse collapse @RemoveCollapsed">
+            <div id="remove-collapse" class="accordion-collapse collapse">
                 <div class="accordion-body">
                     <input @bind="RemoveIndex"/>
                     <button @onclick=OnRemove>Run</button>
@@ -61,11 +63,11 @@
         </div>
         <div class="accordion-item clear">
             <h2 class="accordion-header">
-                <button @onclick=ClearToggle class="accordion-button @ClearCollapsedButton">
+                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#clear-collapse">
                     Clear
                 </button>
             </h2>
-            <div class="accordion-collapse collapse @ClearCollapsed">
+            <div id="clear-collapse" class="accordion-collapse collapse">
                 <div class="accordion-body">
                     <button @onclick=OnClear>Run</button>
                 </div>
@@ -75,55 +77,9 @@
 </div>
 
 @code {
-    string NewCollapsedButton => _newCollapsed ? "collapsed" : "";
-    string AddCollapsedButton => _addCollapsed ? "collapsed" : "";
-    string RemoveCollapsedButton => _removeCollapsed ? "collapsed" : "";
-    string ClearCollapsedButton => _clearCollapsed ? "collapsed" : "";
-
-    string NewCollapsed => _newCollapsed ? "" : "show";
-    string AddCollapsed => _addCollapsed ? "" : "show";
-    string RemoveCollapsed => _removeCollapsed ? "" : "show";
-    string ClearCollapsed => _clearCollapsed ? "" : "show";
-
-    bool _newCollapsed = true;
-    bool _addCollapsed = true;
-    bool _removeCollapsed = true;
-    bool _clearCollapsed = true;
-
-    void NewToggle()
-    {
-        _newCollapsed = !_newCollapsed;
-        _addCollapsed = true;
-        _removeCollapsed = true;
-        _clearCollapsed = true;
-    }
-
-    void AddToggle()
-    {
-        _newCollapsed = true;
-        _addCollapsed = !_addCollapsed;
-        _removeCollapsed = true;
-        _clearCollapsed = true;
-    }
-
-    void RemoveToggle()
-    {
-        _newCollapsed = true;
-        _addCollapsed = true;
-        _removeCollapsed = !_removeCollapsed;
-        _clearCollapsed = true;
-    }
-
-    void ClearToggle()
-    {
-        _newCollapsed = true;
-        _addCollapsed = true;
-        _removeCollapsed = true;
-        _clearCollapsed = !_clearCollapsed;
-    }
-
     // Nodes animation
     int[]? nodes;
+    AnimationEnum _animation = AnimationEnum.Stopped;
 
     string _newArray = "0";
     string _addValue = "0";
@@ -148,7 +104,12 @@
     {
         //NewArray = String.Concat(NewArray.Where(c => !Char.IsWhiteSpace(c)));
         //nodes = StringToIntList(NewArray).ToArray();
-        NewArrayJS(_newArray);
+        if (!StartAnimation()) return;
+
+        while (_animation == AnimationEnum.Playing)
+        {
+            NewArrayJS(_newArray);
+        }
     }
 
     void OnAddValue()
@@ -164,6 +125,13 @@
     void OnClear()
     {
         ClearJS();
+    }
+
+    bool StartAnimation()
+    {
+        if (_animation == AnimationEnum.Playing) return false;
+        _animation = AnimationEnum.Playing;
+        return true;
     }
 
     IEnumerable<int> StringToIntList(string s)
