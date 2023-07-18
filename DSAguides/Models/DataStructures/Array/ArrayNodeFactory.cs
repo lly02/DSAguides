@@ -1,22 +1,40 @@
-﻿using DSAguides.Models.Shared.Nodes;
-using DSAguides.Models.Shared.Nodes.Interface;
+﻿using DSAguides.Interface.Interface;
+using DSAguides.Interface.Nodes;
 
 namespace DSAguides.Models.DataStructures.Array
 {
-    public class ArrayNodeFactory : NodeFactory
+    public class ArrayNodeFactory : INodeFactory
     {
         public ArrayNodeFactory() { }
 
-        public override INode[] CreateNodes(int count)
+        public INode[] CreateNodes(int count)
         {
             var nodes = new INode[count];
 
             for (int i = 0; i < nodes.Length; i++)
             {
-                nodes[i] = new ArrayNode(i);
+                nodes[i] = CreateNode(i);
             }
 
             return nodes;
+        }
+
+        public INode[] CreateNodes(int[] elements)
+        {
+            var nodes = new INode[elements.Length];
+
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                nodes[i] = CreateNode(i, elements[i]);
+            }
+
+            return nodes;
+        }
+
+        public INode CreateNode(int index, int? element = null)
+        {
+            return new ArrayNode(index, element);
+
         }
     }
 }

@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Interface\DataStructures\Array\" />
+    <Folder Include="Models\Shared\Nodes\" />
     <Folder Include="Pages\Algorithms\" />
   </ItemGroup>
 

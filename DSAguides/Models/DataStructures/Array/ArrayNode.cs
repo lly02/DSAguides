@@ -1,4 +1,4 @@
-﻿using DSAguides.Models.Shared.Nodes.Interface;
+﻿using DSAguides.Interface.Interface;
 
 namespace DSAguides.Models.DataStructures.Array
 {
@@ -23,15 +23,10 @@ namespace DSAguides.Models.DataStructures.Array
             get => _element == null ? "" : _element.ToString()!;
         }
 
-        public ArrayNode(int index, int element)
+        public ArrayNode(int index, int? element)
         {
             _index = index;
             _element = element;
-        }
-
-        public ArrayNode(int index)
-        {
-            _index = index;
         }
     }
 }

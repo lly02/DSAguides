@@ -1,8 +1,11 @@
 ﻿@using System.Runtime.InteropServices.JavaScript
-@using DSAguides.Models.DataStructures.Array;
-@using DSAguides.Models.Shared.Nodes.Interface;
-@using Models.Shared.Animation
-@using Models.Shared.Nodes
+@using DSAguides.Interface.Interface
+@using DSAguides.Models.DataStructures.Array
+@using DSAguides.Models.DataStructures.Array.Operations
+@using DSAguides.Models.Shared.Animation
+@using DSAguides.Helper
+
+@inject ILogger<Array> _logger
 
 @page "/data-structures/array"
 
@@ -21,27 +24,27 @@
     <div id="options" class="accordion">
         <div class="accordion-item new">
             <h2 class="accordion-header">
-                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#new-collapse">
+                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#new-collapse">
                     New
                 </button>
             </h2>
             <div id="new-collapse" class="accordion-collapse collapse">
                 <div class="accordion-body">
-                    <input @bind=_newArray />
+                    <input @bind=NewArray />
                     <button @onclick=OnNewArray>Run</button>
                 </div>
             </div>
         </div>
-        <div class="accordion-item add">
+        @*<div class="accordion-item insert">
             <h2 class="accordion-header">
                 <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#add-collapse">
-                    Add
+                    Insert
                 </button>
             </h2>
-            <div id="add-collapse" class="accordion-collapse collapse">
+            <div id="insert-collapse" class="accordion-collapse collapse">
                 <div class="accordion-body">
-                    <input @bind=_addValue/>
-                    <button @onclick=OnAddValue>Run</button>
+                    <input @bind=InsertValue/>
+                    <button @onclick=OnInsertValue>Run</button>
                 </div>
             </div>
         </div>
@@ -57,10 +60,10 @@
                     <button @onclick=OnRemove>Run</button>
                 </div>
             </div>
-        </div>
+        </div>*@
         <div class="accordion-item clear">
             <h2 class="accordion-header">
-                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#clear-collapse">
+                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#clear-collapse">
                     Clear
                 </button>
             </h2>
@@ -74,12 +77,8 @@
 </div>
 
 @code {
-    // Nodes animation
-    INode[]? _nodes;
-    AnimationEnum _animation = AnimationEnum.Stopped;
-
     string _newArray = "0";
-    string _addValue = "0";
+    string _insertValue = "0";
     string _removeIndex = "0";
 
     string NewArray
@@ -87,56 +86,105 @@
         get => _newArray;
         set => _newArray = value;
     }
-    string AddValue
+    string InsertValue
     {
-        get => _addValue;
-        set => _addValue = value;
+        get => _insertValue;
+        set => _insertValue = value;
     }
     string RemoveIndex {
         get => _removeIndex;
         set => _removeIndex = value;
     }
 
-    void OnNewArray()
+    INode[]? _nodes;
+    AnimationEnum _animationState = AnimationEnum.Stopped;
+    int delay = 500;
+
+    async Task OnNewArray()
     {
-        //NewArray = String.Concat(NewArray.Where(c => !Char.IsWhiteSpace(c)));
-        //nodes = StringToIntList(NewArray).ToArray();
+        _logger.LogInformation("Running new array");
         if (!StartAnimation()) return;
 
-        while (_animation == AnimationEnum.Playing)
+        int[] intArray = Utility.StringToIntArray(NewArray);
+        INode[] result = new ArrayNodeFactory().CreateNodes(intArray);
+        _logger.LogInformation("NewArray received: {NewArray}", NewArray);
+        ArrayOperation operation = new ArrayNewOperation(_nodes!, result);
+
+        _logger.LogInformation("Animation playing");
+        while (_animationState == AnimationEnum.Playing)
         {
-            NewArrayJS(_newArray);
+            _nodes = operation.NextFrame();
+
+            StateHasChanged();
+
+            _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
+
+            await Delay();
         }
+        _logger.LogInformation("Animation ended");
     }
 
-    void OnAddValue()
+    async Task OnInsertValue()
     {
-        AddValueJS(_addValue);
+        _logger.LogInformation("Running insert element");
+        if (!StartAnimation()) return;
+
+        INode[] result = Utility.AppendNode(_nodes!, int.Parse(InsertValue));
+        _logger.LogInformation("Add value received: {AddValue}", InsertValue);
+        ArrayOperation operation = new ArrayAddOperation(_nodes!, result);
+
+        _logger.LogInformation("Animation playing");
+        while (_animationState == AnimationEnum.Playing)
+        {
+            _nodes = operation.NextFrame();
+
+            StateHasChanged();
+
+            _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
+
+            await Delay();
+        }
+        _logger.LogInformation("Animation ended");
     }
 
-    void OnRemove()
+    async Task OnRemove()
     {
-        RemoveIndexJS(_removeIndex);
+        _logger.LogInformation("Running remove element");
+        if (!StartAnimation()) return;
+
+        INode[] result = Utility.RemoveIndex(_nodes!, int.Parse(RemoveIndex));
+        _logger.LogInformation("Remove index received: {RemoveIndex}", RemoveIndex);
+        ArrayOperation operation = new ArrayRemoveOperation(_nodes!, result);
+
+        _logger.LogInformation("Animation playing");
+        while (_animationState == AnimationEnum.Playing)
+        {
+            _nodes = operation.NextFrame();
+
+            StateHasChanged();
+
+            _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
+
+            await Delay();
+        }
+        _logger.LogInformation("Animation ended");
     }
 
-    void OnClear()
+    async Task OnClear()
     {
         ClearJS();
     }
 
     bool StartAnimation()
     {
-        if (_animation == AnimationEnum.Playing) return false;
-        _animation = AnimationEnum.Playing;
+        if (_animationState == AnimationEnum.Playing) return false;
+        _animationState = AnimationEnum.Playing;
         return true;
     }
 
-    IEnumerable<int> StringToIntList(string s)
+    async Task Delay()
     {
-        foreach (string str in s.Split(','))
-        {
-            yield return int.Parse(str);
-        }
+        await Task.Delay(delay);
     }
 
     protected override async Task OnInitializedAsync()
