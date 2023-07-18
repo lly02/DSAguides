@@ -1,21 +1,18 @@
 ﻿@using System.Runtime.InteropServices.JavaScript
+@using DSAguides.Models.DataStructures.Array;
+@using DSAguides.Models.Shared.Nodes.Interface;
 @using Models.Shared.Animation
+@using Models.Shared.Nodes
 
 @page "/data-structures/array"
 
 <div id="animation" class="w-100">
     <div id="nodes">
         <div class="row m-0">
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
-            <div class="col node"></div>
+            @foreach (var node in _nodes!)
+            {
+                <div class="col node">@node.ElementToString</div>
+            }
         </div>
     </div>
     <div id="information">
@@ -78,7 +75,7 @@
 
 @code {
     // Nodes animation
-    int[]? nodes;
+    INode[]? _nodes;
     AnimationEnum _animation = AnimationEnum.Stopped;
 
     string _newArray = "0";
@@ -144,6 +141,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _nodes = new ArrayNodeFactory().CreateNodes(10);
+
         await JSHost.ImportAsync("Array", "../Pages/DataStructures/Array.razor.js");
         await base.OnInitializedAsync(); 
     }
