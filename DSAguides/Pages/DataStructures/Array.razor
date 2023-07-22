@@ -1,6 +1,7 @@
 ﻿@using System.Runtime.InteropServices.JavaScript
 @using DSAguides.Interface.Interface
 @using DSAguides.Models.DataStructures.Array
+@using DSAguides.Models.DataStructures.Array.Model
 @using DSAguides.Models.DataStructures.Array.Operations
 @using DSAguides.Models.Shared.Animation
 @using DSAguides.Helper
@@ -30,8 +31,16 @@
             </h2>
             <div id="new-collapse" class="accordion-collapse collapse">
                 <div class="accordion-body">
-                    <input @bind=NewArray />
-                    <button @onclick=OnNewArray>Run</button>
+                    <EditForm Model="@_newArrayModel" OnValidSubmit="@OnNewArray">
+                        <DataAnnotationsValidator />
+
+                        <label>
+                            Input up to 10 elements of array separated by commas ("int, int, int"):<br />
+                            <InputText @bind-Value=_newArrayModel.NewArray />
+                            <button type="submit">Run</button>
+                            <ValidationMessage For="@(() => _newArrayModel.NewArray)" />
+                        </label>
+                    </EditForm>
                 </div>
             </div>
         </div>
@@ -77,24 +86,26 @@
 </div>
 
 @code {
-    string _newArray = "0";
-    string _insertValue = "0";
-    string _removeIndex = "0";
+    private NewArrayModel _newArrayModel = new();
 
-    string NewArray
-    {
-        get => _newArray;
-        set => _newArray = value;
-    }
-    string InsertValue
-    {
-        get => _insertValue;
-        set => _insertValue = value;
-    }
-    string RemoveIndex {
-        get => _removeIndex;
-        set => _removeIndex = value;
-    }
+    //string _newArray = "0";
+    //string _insertValue = "0";
+    //string _removeIndex = "0";
+
+    //string NewArray
+    //{
+    //    get => _newArray;
+    //    set => _newArray = value;
+    //}
+    //string InsertValue
+    //{
+    //    get => _insertValue;
+    //    set => _insertValue = value;
+    //}
+    //string RemoveIndex {
+    //    get => _removeIndex;
+    //    set => _removeIndex = value;
+    //}
 
     INode[]? _nodes;
     AnimationEnum _animationState = AnimationEnum.Stopped;
@@ -105,9 +116,9 @@
         _logger.LogInformation("Running new array");
         if (!StartAnimation()) return;
 
-        int[] intArray = Utility.StringToIntArray(NewArray);
+        int[] intArray = Utility.StringToIntArray(_newArrayModel.NewArray!);
         INode[] result = new ArrayNodeFactory().CreateNodes(intArray);
-        _logger.LogInformation("NewArray received: {NewArray}", NewArray);
+        _logger.LogInformation("NewArray received: {NewArray}", _newArrayModel.NewArray!);
         ArrayOperation operation = new ArrayNewOperation(_nodes!, result);
 
         _logger.LogInformation("Animation playing");
@@ -124,55 +135,72 @@
         _logger.LogInformation("Animation ended");
     }
 
-    async Task OnInsertValue()
-    {
-        _logger.LogInformation("Running insert element");
-        if (!StartAnimation()) return;
+    //async Task OnInsertValue()
+    //{
+    //    _logger.LogInformation("Running insert element");
+    //    if (!StartAnimation()) return;
 
-        INode[] result = Utility.AppendNode(_nodes!, int.Parse(InsertValue));
-        _logger.LogInformation("Add value received: {AddValue}", InsertValue);
-        ArrayOperation operation = new ArrayAddOperation(_nodes!, result);
+    //    INode[] result = Utility.AppendNode(_nodes!, int.Parse(InsertValue));
+    //    _logger.LogInformation("Add value received: {AddValue}", InsertValue);
+    //    ArrayOperation operation = new ArrayAddOperation(_nodes!, result);
 
-        _logger.LogInformation("Animation playing");
-        while (_animationState == AnimationEnum.Playing)
-        {
-            _nodes = operation.NextFrame();
+    //    _logger.LogInformation("Animation playing");
+    //    while (_animationState == AnimationEnum.Playing)
+    //    {
+    //        _nodes = operation.NextFrame();
 
-            StateHasChanged();
+    //        StateHasChanged();
 
-            _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
+    //        _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
 
-            await Delay();
-        }
-        _logger.LogInformation("Animation ended");
-    }
+    //        await Delay();
+    //    }
+    //    _logger.LogInformation("Animation ended");
+    //}
 
-    async Task OnRemove()
-    {
-        _logger.LogInformation("Running remove element");
-        if (!StartAnimation()) return;
+    //async Task OnRemove()
+    //{
+    //    _logger.LogInformation("Running remove element");
+    //    if (!StartAnimation()) return;
 
-        INode[] result = Utility.RemoveIndex(_nodes!, int.Parse(RemoveIndex));
-        _logger.LogInformation("Remove index received: {RemoveIndex}", RemoveIndex);
-        ArrayOperation operation = new ArrayRemoveOperation(_nodes!, result);
+    //    INode[] result = Utility.RemoveIndex(_nodes!, int.Parse(RemoveIndex));
+    //    _logger.LogInformation("Remove index received: {RemoveIndex}", RemoveIndex);
+    //    ArrayOperation operation = new ArrayRemoveOperation(_nodes!, result);
 
-        _logger.LogInformation("Animation playing");
-        while (_animationState == AnimationEnum.Playing)
-        {
-            _nodes = operation.NextFrame();
+    //    _logger.LogInformation("Animation playing");
+    //    while (_animationState == AnimationEnum.Playing)
+    //    {
+    //        _nodes = operation.NextFrame();
 
-            StateHasChanged();
+    //        StateHasChanged();
 
-            _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
+    //        _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
 
-            await Delay();
-        }
-        _logger.LogInformation("Animation ended");
-    }
+    //        await Delay();
+    //    }
+    //    _logger.LogInformation("Animation ended");
+    //}
 
     async Task OnClear()
     {
-        ClearJS();
+        _logger.LogInformation("Running clear array");
+        if (!StartAnimation()) return;
+
+        INode[] result = new ArrayNodeFactory().CreateNodes(_nodes!.Length);
+        ArrayOperation operation = new ArrayClearOperation(_nodes!, result);
+
+        _logger.LogInformation("Animation playing");
+        while (_animationState == AnimationEnum.Playing)
+        {
+            _nodes = operation.NextFrame();
+
+            StateHasChanged();
+
+            _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
+
+            await Delay();
+        }
+        _logger.LogInformation("Animation ended");
     }
 
     bool StartAnimation()
@@ -191,7 +219,6 @@
     {
         _nodes = new ArrayNodeFactory().CreateNodes(10);
 
-        await JSHost.ImportAsync("Array", "../Pages/DataStructures/Array.razor.js");
         await base.OnInitializedAsync(); 
     }
 }
