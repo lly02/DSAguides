@@ -4,14 +4,10 @@ namespace DSAguides.Models.DataStructures.Array.Operations
 {
     public abstract class ArrayOperation
     {
-        private INode[] _currentState;
+        private Pages.DataStructures.Array _page;
         private INode[] _endState;
 
-        public INode[] CurrentState
-        {
-            get => _currentState;
-            set => _currentState = value;
-        }
+        public Pages.DataStructures.Array Page => _page;
         public INode[] EndState
         {
             get => _endState;
@@ -19,12 +15,12 @@ namespace DSAguides.Models.DataStructures.Array.Operations
         }
         public bool Done { get; set; } = false;
 
-        public ArrayOperation(INode[] current, INode[] nodes)
+        public ArrayOperation(Pages.DataStructures.Array page, INode[] endState)
         {
-            _currentState = current;
-            _endState = nodes;
+            _page = page;
+            _endState = endState;
         }
 
-        public abstract INode[] NextFrame();
+        public abstract void NextFrame();
     }
 }

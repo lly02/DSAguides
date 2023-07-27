@@ -1,4 +1,5 @@
-.page {
+.navbar {
+    background-color: var(--dark);
 }
 
 #page-content {

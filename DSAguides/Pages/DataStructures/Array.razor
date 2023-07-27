@@ -10,19 +10,19 @@
 
 @page "/data-structures/array"
 
-<div id="animation" class="w-100">
+<div id="animation" class="w-100 mx-0 mx-md-5 mt-5 mx-md-0">
     <div id="nodes">
-        <div class="row m-0">
+        <div class="d-flex justify-content-center align-items-center m-1 mt-md-5 mb-md-3 animation-container">
             @foreach (var node in _nodes!)
             {
-                <div class="col node">@node.ElementToString</div>
+                <div class="d-flex align-items-center justify-content-center node p-0 h-100">@node.ElementToString</div>
             }
         </div>
     </div>
-    <div id="information">
-        <span class="information-text">Information</span>
+    <div id="information" class="d-flex align-items-center justify-content-center mb-3">
+        <span class="information-text"><b><i>@_information</i></b></span>
     </div>
-    <div id="options" class="accordion">
+    <div id="options" class="accordion mx-5 mx-md-0">
         <div class="accordion-item new">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#new-collapse">
@@ -35,7 +35,7 @@
                         <DataAnnotationsValidator />
 
                         <label>
-                            Input up to 10 elements of array separated by commas ("int, int, int"):<br />
+                            Input up to 10 elements of array separated by commas ("int, int, int,..."):<br />
                             <InputText @bind-Value=_newArrayModel.NewArray />
                             <button type="submit">Run</button>
                             <ValidationMessage For="@(() => _newArrayModel.NewArray)" />
@@ -107,9 +107,20 @@
     //    set => _removeIndex = value;
     //}
 
-    INode[]? _nodes;
-    AnimationEnum _animationState = AnimationEnum.Stopped;
-    int delay = 500;
+    private INode[]? _nodes;
+    private string _information = "Array";
+    private AnimationEnum _animationState = AnimationEnum.Stopped;
+    private int delay = 500;
+
+    public INode[]? Nodes {
+        get => _nodes;
+        set => _nodes = value;
+    }
+    public string Information
+    {
+        get => _information;
+        set => _information = value;
+    }
 
     async Task OnNewArray()
     {
@@ -119,19 +130,21 @@
         int[] intArray = Utility.StringToIntArray(_newArrayModel.NewArray!);
         INode[] result = new ArrayNodeFactory().CreateNodes(intArray);
         _logger.LogInformation("NewArray received: {NewArray}", _newArrayModel.NewArray!);
-        ArrayOperation operation = new ArrayNewOperation(_nodes!, result);
+        ArrayOperation operation = new ArrayNewOperation(this, result);
 
         _logger.LogInformation("Animation playing");
         while (_animationState == AnimationEnum.Playing)
         {
-            _nodes = operation.NextFrame();
-
+            operation.NextFrame();
             StateHasChanged();
 
             _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
 
             await Delay();
         }
+        _information = "Array";
+        StateHasChanged();
+
         _logger.LogInformation("Animation ended");
     }
 
@@ -187,19 +200,21 @@
         if (!StartAnimation()) return;
 
         INode[] result = new ArrayNodeFactory().CreateNodes(_nodes!.Length);
-        ArrayOperation operation = new ArrayClearOperation(_nodes!, result);
+        ArrayOperation operation = new ArrayClearOperation(this, result);
 
         _logger.LogInformation("Animation playing");
         while (_animationState == AnimationEnum.Playing)
         {
-            _nodes = operation.NextFrame();
-
+            operation.NextFrame();
             StateHasChanged();
 
             _animationState = operation.Done ? AnimationEnum.Stopped : _animationState;
 
             await Delay();
         }
+        _information = "Array";
+        StateHasChanged();
+
         _logger.LogInformation("Animation ended");
     }
 

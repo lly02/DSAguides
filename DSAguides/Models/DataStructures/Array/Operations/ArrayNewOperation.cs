@@ -4,26 +4,32 @@ namespace DSAguides.Models.DataStructures.Array.Operations
 {
     public class ArrayNewOperation : ArrayOperation
     {
-        private ArrayClearOperation _clearOperation;
+        //private ArrayClearOperation _clearOperation;
         private ArrayAddOperation? _addOperation;
+        private bool _newArrayCreated = false;
 
-        public ArrayNewOperation(INode[] currentState, INode[] endState)
-            : base(currentState, endState)
+        public ArrayNewOperation(Pages.DataStructures.Array page, INode[] endState)
+            : base(page, endState)
         {
-            _clearOperation = new ArrayClearOperation(
-                CurrentState,
-                new ArrayNodeFactory().CreateNodes(10));
+            //_clearOperation = new ArrayClearOperation(
+            //    page,
+            //    new ArrayNodeFactory().CreateNodes(10));
         }
 
-        public override INode[] NextFrame()
+        public override void NextFrame()
         {
-            if (!_clearOperation.Done) return CurrentState = _clearOperation.NextFrame();
-            if (_addOperation is null) _addOperation = new ArrayAddOperation(CurrentState, EndState);
+            if (!_newArrayCreated)
+            {
+                Page.Nodes = new ArrayNodeFactory().CreateNodes(EndState.Length);
+                Page.Information = $"Creating an array of size {EndState.Length}.";
+                _newArrayCreated = true;
+                return;
+            }
 
-            CurrentState = _addOperation.NextFrame();
+            if (_addOperation is null) _addOperation = new ArrayAddOperation(Page, EndState);
+
+            _addOperation.NextFrame();
             Done = _addOperation.Done ? true : false;
-
-            return CurrentState;
         }
     }
 }

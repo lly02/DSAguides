@@ -4,12 +4,12 @@ namespace DSAguides.Models.DataStructures.Array.Operations
 {
     public class ArrayClearOperation : ArrayOperation
     {
-        public ArrayClearOperation(INode[] currentState, INode[] endState)
-            : base(currentState, endState)
+        public ArrayClearOperation(Pages.DataStructures.Array page, INode[] endState)
+            : base(page, endState)
         {
         }
 
-        public override INode[] NextFrame()
+        public override void NextFrame()
         {
             //for (int i = 0; i < CurrentState.Length ; i++)
             //{
@@ -33,7 +33,8 @@ namespace DSAguides.Models.DataStructures.Array.Operations
 
             //return CurrentState;
             Done = true;
-            return EndState;
+            Page.Nodes = EndState;
+            Page.Information = "Constructing a new array.";
         }
     }
 }

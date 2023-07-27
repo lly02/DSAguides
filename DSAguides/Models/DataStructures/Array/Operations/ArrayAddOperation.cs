@@ -7,18 +7,18 @@ namespace DSAguides.Models.DataStructures.Array.Operations
         private ArrayClearOperation? _clearOperation;
         private int _addPosition = -1;
 
-        public ArrayAddOperation(INode[] currentState, INode[] endState)
-            : base(currentState, endState)
+        public ArrayAddOperation(Pages.DataStructures.Array page, INode[] endState)
+            : base(page, endState)
         {
         }
 
-        public override INode[] NextFrame()
+        public override void NextFrame()
         {
             if (_addPosition == -1)
             {
                 for (int i = 0; i < EndState.Length; i++)
                 {
-                    if (CurrentState[i].Element == null)
+                    if (Page.Nodes![i].Element == null)
                     {
                         _addPosition = i;
                         break;
@@ -28,13 +28,13 @@ namespace DSAguides.Models.DataStructures.Array.Operations
                 Done = _addPosition == -1 ? true : false;
             }
 
-            if (Done) return CurrentState;
+            if (Done) return;
 
-            CurrentState[_addPosition].Element = EndState[_addPosition].Element;
+            Page.Nodes![_addPosition].Element = EndState[_addPosition].Element;
+            Page.Information = $"Adding element {EndState[_addPosition].ElementToString} at index {EndState[_addPosition].Index}.";
+
             _addPosition++;
             Done = _addPosition >= EndState.Length ? true : false;
-
-            return CurrentState;
         }
     }
 }
