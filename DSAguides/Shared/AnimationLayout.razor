@@ -2,28 +2,19 @@
 @layout MainLayout
     
 <div class="row g-0 h-100">
-    <div id="sidebar" class="@_sidebarShowing col-2 d-flex" tabindex="0" @ref="_sidebar" @onblur="@(() => FocusContent())">
-        <ul class="nav nav-pills flex-column flex-grow-1">
-            <li class="nav-item">
-                <a class="nav-link active" href="/">Array</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/">Something</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/">Something2</a>
-            </li>
-        </ul>
-        <button id="sidebar-toggle" class="@_sidebarShowing btn" @onclick="SidebarToggle">
-            <img class="show-sidebar @_showSidebar" src="/images/site/arrow-right-circle.svg" alt="sidebar-toggle" />
-            <img class="hide-sidebar @_hideSidebar" src="/images/site/arrow-left-circle.svg" alt="sidebar-toggle" />
-        </button>
-    </div>
-
-    <div id="content" class="col d-flex">
+    <div id="content" class="col d-flex h-100">
+        <div id="sidebar" class="@_sidebarShowing h-100 col-2 d-flex flex-column" tabindex="0" @ref="_sidebar" @onblur="@(() => FocusContent())">
+            <ul class="nav nav-pills flex-column flex-grow-1">
+                <Sidebar>
+                </Sidebar>
+            </ul>
+            <button id="sidebar-toggle" class="@_sidebarShowing btn" @onclick="SidebarToggle">
+                <img class="show-sidebar @_showSidebar" src="/images/site/arrow-right-circle.svg" alt="sidebar-toggle" />
+                <img class="hide-sidebar @_hideSidebar" src="/images/site/arrow-left-circle.svg" alt="sidebar-toggle" />
+            </button>
+        </div>
         @Body
     </div>
-
 </div>
 
 @code {

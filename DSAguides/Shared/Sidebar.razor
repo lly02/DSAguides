@@ -1,0 +1,55 @@
+﻿@inject NavigationManager _navigation
+
+@if (_navigation.Uri.Contains("data-structures"))
+{
+    foreach (string title in _dataStructures)
+    {
+        <li class="nav-item">
+            <a class="nav-link @IsCurrent(TitleToRoute(title))" href="/data-structures/@TitleToRoute(title)">@title</a>
+        </li>
+    }
+}
+else if (_navigation.Uri.Contains("algorithms"))
+{
+    foreach (string title in _algorithms)
+    {
+        <li class="nav-item">
+            <a class="nav-link @IsCurrent(TitleToRoute(title))" href="/algorithms/@TitleToRoute(title)">@title</a>
+        </li>
+    }
+}
+
+@code 
+{
+    private string[] _dataStructures = new string[]
+    {
+        "Array",
+        "String",
+        "Linked List",
+        "Stack",
+        "Queue",
+        "Tree",
+        "Heap",
+        "Hashing",
+        "Graph"
+    };
+
+    private string[] _algorithms = new string[]
+    {
+        "Searching",
+        "Sorting",
+        "Recursion",
+        "Backtracking",
+        "Greedy",
+        "Dynamic Programming"
+    };
+
+    private string TitleToRoute(string title) =>
+        title.ToLower().Replace(" ", "-");
+
+    private string IsCurrent(string route)
+    {
+        if (_navigation.Uri.Contains(route)) return "active";
+        else return "";
+    }
+}
