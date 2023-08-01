@@ -1,4 +1,4 @@
-﻿using DSAguides.Interface.Interface;
+﻿using DSAguides.Interface.Nodes;
 using DSAguides.Models.DataStructures.Array;
 
 namespace DSAguides.Helper

@@ -1,4 +1,4 @@
-﻿using DSAguides.Interface.Interface;
+﻿using DSAguides.Interface.Nodes;
 
 namespace DSAguides.Models.DataStructures.Array.Operations
 {
@@ -6,6 +6,9 @@ namespace DSAguides.Models.DataStructures.Array.Operations
     {
         private ArrayClearOperation? _clearOperation;
         private int _addPosition = -1;
+
+        public ArrayAddOperation()
+            : base() { }
 
         public ArrayAddOperation(Pages.DataStructures.Array page, INode[] endState)
             : base(page, endState)
@@ -16,9 +19,9 @@ namespace DSAguides.Models.DataStructures.Array.Operations
         {
             if (_addPosition == -1)
             {
-                for (int i = 0; i < EndState.Length; i++)
+                for (int i = 0; i < EndState!.Length; i++)
                 {
-                    if (Page.Nodes![i].Element == null)
+                    if (Page!.Nodes![i].Element == null)
                     {
                         _addPosition = i;
                         break;
@@ -30,7 +33,7 @@ namespace DSAguides.Models.DataStructures.Array.Operations
 
             if (Done) return;
 
-            Page.Nodes![_addPosition].Element = EndState[_addPosition].Element;
+            Page!.Nodes![_addPosition].Element = EndState![_addPosition].Element;
             Page.Information = $"Adding element {EndState[_addPosition].ElementToString} at index {EndState[_addPosition].Index}.";
 
             _addPosition++;

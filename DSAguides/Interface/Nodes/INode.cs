@@ -1,4 +1,4 @@
-﻿namespace DSAguides.Interface.Interface
+﻿namespace DSAguides.Interface.Nodes
 {
     public interface INode
     {

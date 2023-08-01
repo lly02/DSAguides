@@ -1,6 +1,4 @@
-﻿using DSAguides.Interface.Interface;
-
-namespace DSAguides.Interface.Nodes
+﻿namespace DSAguides.Interface.Nodes
 {
     public interface INodeFactory
     {

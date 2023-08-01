@@ -1,5 +1,4 @@
-﻿using DSAguides.Interface.Animation;
-using DSAguides.Interface.Interface;
+﻿using DSAguides.Interface.Nodes;
 
 namespace DSAguides.Models.DataStructures.Array
 {

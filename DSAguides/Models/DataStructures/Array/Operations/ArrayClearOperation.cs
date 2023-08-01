@@ -1,9 +1,12 @@
-﻿using DSAguides.Interface.Interface;
+﻿using DSAguides.Interface.Nodes;
 
 namespace DSAguides.Models.DataStructures.Array.Operations
 {
     public class ArrayClearOperation : ArrayOperation
     {
+        public ArrayClearOperation() 
+            : base () { }
+
         public ArrayClearOperation(Pages.DataStructures.Array page, INode[] endState)
             : base(page, endState)
         {
@@ -33,7 +36,7 @@ namespace DSAguides.Models.DataStructures.Array.Operations
 
             //return CurrentState;
             Done = true;
-            Page.Nodes = EndState;
+            Page!.Nodes = EndState;
             Page.Information = "Constructing a new array.";
         }
     }

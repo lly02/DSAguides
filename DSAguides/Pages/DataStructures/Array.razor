@@ -1,5 +1,6 @@
 ﻿@using System.Runtime.InteropServices.JavaScript
-@using DSAguides.Interface.Interface
+@using DSAguides.Interface.Nodes;
+@using DSAguides.Interface;
 @using DSAguides.Models.DataStructures.Array
 @using DSAguides.Models.DataStructures.Array.Model
 @using DSAguides.Models.DataStructures.Array.Operations
@@ -7,6 +8,8 @@
 @using DSAguides.Helper
 
 @inject ILogger<Array> _logger
+@inject IServiceFactory<INodeFactory> _nodeServiceFactory
+@inject IServiceFactory<ArrayOperation> _arrayOperation
 
 @page "/data-structures/array"
 
@@ -107,6 +110,7 @@
     //    set => _removeIndex = value;
     //}
 
+    private INodeFactory? _arrayFactory;
     private INode[]? _nodes;
     private string _information = "Array";
     private AnimationEnum _animationState = AnimationEnum.Stopped;
@@ -128,9 +132,11 @@
         if (!StartAnimation()) return;
 
         int[] intArray = Utility.StringToIntArray(_newArrayModel.NewArray!);
-        INode[] result = new ArrayNodeFactory().CreateNodes(intArray);
+        INode[] result = _arrayFactory!.CreateNodes(intArray);
         _logger.LogInformation("NewArray received: {NewArray}", _newArrayModel.NewArray!);
-        ArrayOperation operation = new ArrayNewOperation(this, result);
+        ArrayOperation operation = _arrayOperation.GetInstance("new");
+        operation.Page = this;
+        operation.EndState = result;
 
         _logger.LogInformation("Animation playing");
         while (_animationState == AnimationEnum.Playing)
@@ -199,8 +205,10 @@
         _logger.LogInformation("Running clear array");
         if (!StartAnimation()) return;
 
-        INode[] result = new ArrayNodeFactory().CreateNodes(_nodes!.Length);
-        ArrayOperation operation = new ArrayClearOperation(this, result);
+        INode[] result = _arrayFactory!.CreateNodes(_nodes!.Length);
+        ArrayOperation operation = _arrayOperation.GetInstance("clear");
+        operation.Page = this;
+        operation.EndState = result;
 
         _logger.LogInformation("Animation playing");
         while (_animationState == AnimationEnum.Playing)
@@ -232,7 +240,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _nodes = new ArrayNodeFactory().CreateNodes(10);
+        _arrayFactory = _nodeServiceFactory.GetInstance("array");
+        _nodes = _arrayFactory.CreateNodes(10);
 
         await base.OnInitializedAsync(); 
     }
