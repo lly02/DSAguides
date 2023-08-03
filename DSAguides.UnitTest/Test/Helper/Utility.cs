@@ -1,24 +1,29 @@
-﻿    namespace DSAguides.UnitTest.Test.Helper
+﻿using DSAguides.Interface.Nodes;
+using DSAguides.Models.DataStructures.Array;
+
+namespace DSAguides.UnitTest.Test.Helper
 {
     [TestClass]
     public class Utility
     {
         [TestMethod]
-        public void StringToIntArray_Correct_String_Length_10()
+        public void StringToIntArray_Pass()
         {
-            string S = "1,2,3,4,5,6,7,8,9,10";
-            var Expected = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            int[] Actual = DSAguides.Helper.Utility.StringToIntArray(S);
+            string s = "1,2,3,4,5,6,7,8,9,10";
+            var expected = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            int[] actual = DSAguides.Helper.Utility.StringToIntArray(s);
 
-            CollectionAssert.AreEqual(Expected, Actual);
+            CollectionAssert.AreEqual(expected, actual);
         }
 
         [TestMethod]
-        public void StringToIntArray_Wrong()
+        [ExpectedException(typeof(FormatException))]
+        public void StringToIntArray_Fail_NotInteger()
         {
-            string s = "1,2,3,4,sdf";
-
-            Assert.ThrowsException<FormatException>(() => DSAguides.Helper.Utility.StringToIntArray(s));
+            string s = "1,2,3,4,5,ad";
+            DSAguides.Helper.Utility.StringToIntArray(s);
         }
+
+
     }
 }

@@ -23,7 +23,7 @@ namespace DSAguides.Models.DataStructures.Array
             get => _element == null ? "" : _element.ToString()!;
         }
 
-        public ArrayNode(int index, int? element)
+        public ArrayNode(int index, int? element = null)
         {
             _index = index;
             _element = element;
