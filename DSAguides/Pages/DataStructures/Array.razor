@@ -86,6 +86,14 @@
             </div>
         </div>
     </div>
+    <div id="about" class="mx-5 my-3 mx-md-0">
+        <p>Definition: <i><b>An array is a collection of items of same data type stored at contiguous memory locations.</b></i></p>
+
+        <p>In an array, each every index is <b>assigned an element which can be accessed using the respective index.</b></p>
+        <p>An array is also always of a <b>fixed size</b>, this means that it is not possible to alter the size after initialized. However, the array remains <b>mutable</b>, the element of each index can be changed.</p>
+        <p>When attempting to <b>INSERT</b> or <b>DELETE</b> at any position, a new array will be initialized. The reason being the data are stored at contiguous memory location, the next memory location could be occupied which results in the need to reassign the data to another memory location. Both operation hence has a time complexity of <b>O(n)</b>.</p>
+        <p>The inserting and deleting could be done in <b>O(1)</b> by using a <a href="/algorithms/linked-list">linked-list</a> data structure.</p>
+    </div>
 </div>
 
 @code {
